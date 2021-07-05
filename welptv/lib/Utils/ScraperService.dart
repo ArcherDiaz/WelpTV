@@ -12,8 +12,6 @@ class ScraperService extends ChangeNotifier{
 
   // https://allorigins.win/
   String _corsProxy = "https://api.allorigins.win/get?url=";
-
-  SeriesClass series;
   
   Future<List<SeriesClass>> getSearch;
   Future<SeriesClass> getSeriesData;
@@ -80,7 +78,7 @@ class ScraperService extends ChangeNotifier{
       }
       main.querySelector("section.single-anime-category ul.episodes",).children.forEach((element) {
         EpisodeClass episodeClass = EpisodeClass();
-        episodeClass.seriesName = seriesUrl;
+        episodeClass.seriesName = _series.name;
         episodeClass.url = element.querySelector("a").attributes["href"];
         episodeClass.name = _series.name + ": " + element.querySelector("a").text.trim();
         _series.episodes.add(episodeClass,);

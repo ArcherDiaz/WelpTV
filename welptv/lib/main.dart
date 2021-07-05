@@ -8,6 +8,7 @@ import 'package:welptv/utils/ScraperService.dart';
 
 
 // flutter run -d chrome --web-renderer html
+// flutter build web --web-renderer html --release
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
   Firebase.initializeApp();

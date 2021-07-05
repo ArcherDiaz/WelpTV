@@ -156,7 +156,7 @@ class _NavigationState extends State<Navigation> {
       },
       onHover: ContainerChanges(),
       borderRadius: 0.0,
-      color: (!isMobile && isCurrentScreen(i,)) ? colors.white.withOpacity(0.05,) : Colors.transparent,
+      color: (!isMobile && isCurrentScreen(i,)) ? colors.midGrey.withOpacity(0.2,) : Colors.transparent,
       border: (!isMobile && isCurrentScreen(i,))
           ? Border(left: BorderSide(color: colors.purple, width: 5.0,),)
           : Border(),

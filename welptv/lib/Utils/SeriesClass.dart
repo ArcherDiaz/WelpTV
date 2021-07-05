@@ -4,10 +4,11 @@ class SeriesClass{
 
   String image;
   String name;
+  String release;
+  String url;
+
   String plot;
   List<String> genres;
-  String url;
-  String release;
   List<EpisodeClass> episodes;
 
   Color seriesColor;

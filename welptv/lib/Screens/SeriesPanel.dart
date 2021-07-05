@@ -22,11 +22,6 @@ class _SeriesPanelState extends State<SeriesPanel> {
   Size _size;
 
   @override
-  void initState() {
-    super.initState();
-  }
-
-  @override
   Widget build(BuildContext context) {
     _size = MediaQuery.of(context).size;
     return Material(
@@ -202,14 +197,15 @@ class _SeriesPanelState extends State<SeriesPanel> {
               return StaggeredTile.fit(1);
             },
             itemBuilder: (context, i){
+              bool _isWatched = snapshot.data.any((element) => element.url == _seriesData.episodes[i].url);
               return ButtonView(
                 onPressed: (){
                   Beamer.of(context).beamToNamed("/watch",
                     data: {"episode": _seriesData.episodes[i],},
                   );
                 },
-                color: snapshot.data.any((element) => element.name == _seriesData.episodes[i].name)
-                    ? colors.purple
+                color: _isWatched
+                    ? colors.midGrey.withOpacity(0.2,)
                     : Colors.transparent,
                 border: Border.all(color: colors.midGrey, width: 1.0,),
                 highlightColor: colors.white.withOpacity(0.2,),
@@ -221,14 +217,14 @@ class _SeriesPanelState extends State<SeriesPanel> {
                       size: 15.0,
                       letterSpacing: 0.0,
                       align: TextAlign.center,
-                      color: colors.white,
+                      color: _isWatched ? colors.purple : colors.white,
                       fontWeight: FontWeight.w500,
                     ),
                   ),
                   Tooltip(
                     message: "Play episode ${(i+1)}",
-                    child: Icon(Icons.play_arrow_outlined,
-                      color: colors.white,
+                    child: Icon(_isWatched ? Icons.check : Icons.play_arrow_outlined,
+                      color: _isWatched ? colors.purple : colors.white,
                       size: 25.0,
                     ),
                   ),

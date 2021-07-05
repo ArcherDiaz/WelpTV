@@ -46,7 +46,7 @@ class _HomeTabState extends State<HomeTab> {
       _resultsList.forEach((element) {
         map.putIfAbsent(element.name, () => element.toMap());
       });
-      _firestore.collection("OurTopPicks").add(map);
+      _firestore.collection("OurTopPicks").doc("tops").set(map,);
 
       return _resultsList;
     }).catchError((onError){

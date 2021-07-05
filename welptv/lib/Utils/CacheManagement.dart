@@ -37,10 +37,11 @@ class CacheManagement extends ChangeNotifier{
   }
 
   Future<List<EpisodeClass>> loadWatchedEpisodes(SeriesClass series){
-    return _storageClass.readFromMap(series.name).then((data){
+    String filename = series.name.toLowerCase().replaceAll(" ", "") + ".welp";
+    return _storageClass.readFromMap(filename).then((data){
       List<EpisodeClass> _list = [];
       data.forEach((key, value) {
-        _list.add(EpisodeClass.fromJSON(value,));
+        _list.add(EpisodeClass.fromJSON(value, seriesName: series.name,));
       });
       return _list;
     });
@@ -76,14 +77,15 @@ class CacheManagement extends ChangeNotifier{
   }
 
   void saveWatchedEpisode(EpisodeClass episode){
-    _storageClass.readFromMap(episode.seriesName).then((data){
+    String filename = episode.seriesName.toLowerCase().replaceAll(" ", "") + ".welp";
+    _storageClass.readFromMap(filename).then((data){
       Map<String, dynamic> _list = data;
 
       if(!data.containsKey(episode.name)){
-        _list.putIfAbsent(episode.name, () => episode.toMap(),);
+        _list.putIfAbsent(episode.url, () => episode.toMap(),);
       }
 
-      _storageClass.writeToMap(episode.seriesName, _list,);
+      _storageClass.writeToMap(filename, _list,);
     });
   }
 
