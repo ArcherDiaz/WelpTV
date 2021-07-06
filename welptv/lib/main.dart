@@ -3,12 +3,14 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:welptv/BeamerLocations.dart';
+import 'package:welptv/Utils/NotificationService.dart';
 import 'package:welptv/utils/FirebaseService.dart';
 import 'package:welptv/utils/ScraperService.dart';
 
 
 // flutter run -d chrome --web-renderer html
 // flutter build web --web-renderer html --release
+
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
   Firebase.initializeApp();
@@ -41,6 +43,7 @@ class AppWrapper extends StatelessWidget {
       providers: [
         Provider(create: (context) => FirebaseService(),),
         ChangeNotifierProvider(create: (context) => ScraperService(),),
+        ChangeNotifierProvider(create: (context) => NotificationService(),),
       ],
       child: MaterialApp.router(
         title: "WelpTV",
@@ -60,5 +63,6 @@ class AppWrapper extends StatelessWidget {
       ),
     );
   }
+
 
 }

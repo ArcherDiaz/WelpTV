@@ -29,9 +29,9 @@ class _VideoWidgetState extends State<VideoWidget> {
   Future<void> _initializeVideoPlayerFuture;
   Timer viewControls;
 
-  bool _showControls;
-
   Size _size;
+
+  bool _showControls;
 
   @override
   void initState() {
@@ -167,7 +167,7 @@ class _VideoWidgetState extends State<VideoWidget> {
           GestureDetector(
             onTap: (){
               setState(() {
-                if(_size.width < 900 && _size.height < 900){
+                if(isMobile){
                   setState(() {
                     _showControls = !_showControls;
                   });
@@ -201,7 +201,63 @@ class _VideoWidgetState extends State<VideoWidget> {
   }
 
   Widget _controlPanel(){
-    if (_size.width > 900 || _size.height > 900) {
+    if(isMobile) {
+      return Column(
+        children: [
+          Expanded(
+            child: _mediaButtons(),
+          ),
+          _slider(),
+          Padding(
+            padding: EdgeInsets.symmetric(vertical: 5.0,),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                TextView.rich(
+                  textSpan: [
+                    TextView(text: _formatTime(_controller.value.position,),
+                      color: colors.white,
+                      size: 12.5,
+                      fontWeight: FontWeight.w500,
+                    ),
+                    TextView(text: " / ",
+                      color: colors.white,
+                      size: 15.0,
+                      fontWeight: FontWeight.w400,
+                    ),
+                    TextView(text: _formatTime(_controller.value.duration,),
+                      color: colors.midGrey,
+                      size: 12.5,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ],
+                  padding: EdgeInsets.symmetric(horizontal: 20.0,),
+                ),
+                _volumeSlider(),
+                _customControls(),
+                ButtonView(
+                  onPressed: (){
+                    setState(() {
+                      if(_controller.value.isPlaying) {
+                        _controller.pause();
+                      }
+                    });
+                    widget.onClose();
+                  },
+                  borderRadius: 360.0,
+                  padding: EdgeInsets.all(5.0,),
+                  highlightColor: colors.white.withOpacity(0.2,),
+                  child: Icon(Icons.close_outlined,
+                    color: colors.white,
+                    size: 25.0,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      );
+    } else {
       return Align(
         alignment: Alignment.bottomCenter,
         child: Padding(
@@ -261,62 +317,6 @@ class _VideoWidgetState extends State<VideoWidget> {
           ),
         ),
       );
-    } else {
-      return Column(
-        children: [
-          Expanded(
-            child: _mediaButtons(isMobile: true,),
-          ),
-          _slider(),
-          Padding(
-            padding: EdgeInsets.symmetric(vertical: 5.0,),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                TextView.rich(
-                  textSpan: [
-                    TextView(text: _formatTime(_controller.value.position,),
-                      color: colors.white,
-                      size: 12.5,
-                      fontWeight: FontWeight.w500,
-                    ),
-                    TextView(text: " / ",
-                      color: colors.white,
-                      size: 15.0,
-                      fontWeight: FontWeight.w400,
-                    ),
-                    TextView(text: _formatTime(_controller.value.duration,),
-                      color: colors.midGrey,
-                      size: 12.5,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ],
-                  padding: EdgeInsets.symmetric(horizontal: 20.0,),
-                ),
-                _volumeSlider(),
-                _customControls(),
-                ButtonView(
-                  onPressed: (){
-                    setState(() {
-                      if(_controller.value.isPlaying) {
-                        _controller.pause();
-                      }
-                    });
-                    widget.onClose();
-                  },
-                  borderRadius: 360.0,
-                  padding: EdgeInsets.all(5.0,),
-                  highlightColor: colors.white.withOpacity(0.2,),
-                  child: Icon(Icons.close_outlined,
-                    color: colors.white,
-                    size: 25.0,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      );
     }
   }
 
@@ -331,7 +331,7 @@ class _VideoWidgetState extends State<VideoWidget> {
         thumbShape: SliderComponentShape.noThumb,
         overlayColor: colors.white,
         overlappingShapeStrokeColor: colors.white,
-        overlayShape: RoundSliderThumbShape(enabledThumbRadius: 3.0,),
+        overlayShape: RoundSliderThumbShape(enabledThumbRadius: 4.0,),
       ),
       child: Slider(
         value: _controller.value.position.inSeconds.floorToDouble(),
@@ -346,7 +346,7 @@ class _VideoWidgetState extends State<VideoWidget> {
     );
   }
 
-  Widget _mediaButtons({bool isMobile = false}){
+  Widget _mediaButtons(){
     return Row(
       mainAxisAlignment: isMobile ? MainAxisAlignment.spaceEvenly : MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.center,
@@ -508,7 +508,7 @@ class _VideoWidgetState extends State<VideoWidget> {
   }
 
   void onHover(PointerEvent event) {
-    if((event.delta.distance > 0.0 || event.delta.distance < 0.0)){
+    if(event.delta.distance > 5.0){
       setState(() {
         _showControls = true;
       });
@@ -523,6 +523,17 @@ class _VideoWidgetState extends State<VideoWidget> {
           });
         });
       }
+    }
+  }
+
+
+
+  bool get isMobile {
+    Size _size = MediaQuery.of(context,).size;
+    if(_size.width > 1000 || _size.height > 1000){
+      return false;
+    }else{
+      return true;
     }
   }
 
