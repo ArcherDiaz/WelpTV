@@ -46,4 +46,4 @@ app.*.map.json
 /android/app/release
 
 # Scraping Functionality
-lib/Utils/ScraperService.dart
+lib/Services/

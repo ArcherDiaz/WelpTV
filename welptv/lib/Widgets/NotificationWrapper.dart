@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:welptv/Utils/ColorsClass.dart' as colors;
-import 'package:welptv/Utils/NotificationService.dart';
+import 'package:welptv/Services/NotificationService.dart';
 
 class NotificationWrapper extends StatefulWidget {
   final Widget child;

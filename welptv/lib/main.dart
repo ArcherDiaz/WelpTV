@@ -3,7 +3,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:welptv/BeamerLocations.dart';
-import 'package:welptv/Utils/NotificationService.dart';
+import 'package:welptv/Services/NotificationService.dart';
 import 'package:welptv/utils/FirebaseService.dart';
 import 'package:welptv/utils/ScraperService.dart';
 
