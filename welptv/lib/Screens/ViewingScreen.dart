@@ -22,15 +22,16 @@ class _ViewingScreenState extends State<ViewingScreen> {
 
   CacheManagement _cacheManagement = CacheManagement();
 
+  bool _isAlreadySaved;
   bool _isExpanded;
   Size _size;
 
 
   @override
   void initState() {
+    _isAlreadySaved = false;
     _isExpanded = true;
     super.initState();
-    //print(widget.episode.url);
     Provider.of<ScraperService>(context, listen: false,).scrapeEpisodeData(widget.episode.url,);
   }
 
@@ -196,8 +197,11 @@ class _ViewingScreenState extends State<ViewingScreen> {
                   title: widget.episode.name,
                   videoUrl: snapshot.data,
                   videoListener: (currentPosition, maxDuration){
-                    if(currentPosition.inSeconds > (maxDuration.inSeconds/2)){
-                      _cacheManagement.saveWatchedEpisode(widget.episode,);
+                    if(!_isAlreadySaved) {
+                      if (currentPosition.inSeconds > (maxDuration.inSeconds / 2)) {
+                        _cacheManagement.saveWatchedEpisode(widget.episode,);
+                        _isAlreadySaved = true;
+                      }
                     }
                   },
                   children: [
