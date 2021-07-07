@@ -5,7 +5,7 @@ import 'package:sad_lib/CustomWidgets.dart';
 import 'package:welptv/Utils/ColorsClass.dart' as colors;
 import 'package:welptv/Widgets/Navigation.dart';
 import 'package:welptv/Widgets/SeriesCard.dart';
-import 'package:welptv/utils/ScraperService.dart';
+import 'package:welptv/Services/ScraperService.dart';
 import 'package:welptv/utils/SeriesClass.dart';
 
 class SearchTab extends StatefulWidget {

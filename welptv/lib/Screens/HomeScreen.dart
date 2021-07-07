@@ -11,7 +11,7 @@ import 'package:welptv/Widgets/NotificationWrapper.dart';
 import 'package:welptv/Widgets/SeriesCard.dart';
 import 'package:welptv/Widgets/TopPicksWidget.dart';
 import 'package:welptv/utils/CacheManagement.dart';
-import 'package:welptv/utils/ScraperService.dart';
+import 'package:welptv/Services/ScraperService.dart';
 import 'package:welptv/utils/SeriesClass.dart';
 
 class HomeTab extends StatefulWidget {

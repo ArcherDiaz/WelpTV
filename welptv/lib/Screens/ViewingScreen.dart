@@ -6,7 +6,7 @@ import 'package:sad_lib/CustomWidgets.dart';
 import 'package:welptv/Utils/ColorsClass.dart' as colors;
 import 'package:welptv/Widgets/VideoWidget.dart';
 import 'package:welptv/utils/CacheManagement.dart';
-import 'package:welptv/utils/ScraperService.dart';
+import 'package:welptv/Services/ScraperService.dart';
 import 'package:welptv/utils/SeriesClass.dart';
 
 class ViewingScreen extends StatefulWidget {

@@ -4,8 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:welptv/BeamerLocations.dart';
 import 'package:welptv/Services/NotificationService.dart';
-import 'package:welptv/utils/FirebaseService.dart';
-import 'package:welptv/utils/ScraperService.dart';
+import 'package:welptv/Services/FirebaseService.dart';
+import 'package:welptv/Services/ScraperService.dart';
 
 
 // flutter run -d chrome --web-renderer html
