@@ -1,10 +1,8 @@
-import 'dart:convert';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
-import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
 import 'package:sad_lib/CustomWidgets.dart';
+import 'package:welptv/Services/FirebaseService.dart';
 import 'package:welptv/Utils/ColorsClass.dart' as colors;
 import 'package:welptv/Widgets/Navigation.dart';
 import 'package:welptv/Widgets/NotificationWrapper.dart';
@@ -26,42 +24,11 @@ class _HomeTabState extends State<HomeTab> {
 
   ScrollController _scrollController;
 
-  FirebaseFirestore _firestore = FirebaseFirestore.instance;
-  Future<List<SeriesClass>> _topPicksFuture;
-  List<SeriesClass> _resultsList = [];
-
-
-  Future<List<SeriesClass>> _getTopPicks(){
-    String url = "https://gogoscraper.glitch.me/picks";
-    // make the api request to the server to retrieve search results
-    return http.get(Uri.parse(url),).then((response){
-      _resultsList.clear();
-      List<dynamic> data = json.decode(response.body);
-      // using the response from the api, parse the json data into SeriesClass objects
-      // and populate the resultsList variable with these objects
-      data.forEach((element) {
-        _resultsList.add(SeriesClass.fromJSON(element,),);
-      });
-
-      Map<String, dynamic> map = {};
-      _resultsList.forEach((element) {
-        map.putIfAbsent(element.name, () => element.toMap());
-      });
-      _firestore.collection("OurTopPicks").doc("tops").set(map,);
-
-      return _resultsList;
-    }).catchError((onError){
-      print(onError.toString());
-      return _resultsList;
-    });
-  }
-
 
   @override
   void initState() {
     _scrollController = ScrollController();
     super.initState();
-    _topPicksFuture = _getTopPicks();
   }
 
   @override
@@ -152,49 +119,53 @@ class _HomeTabState extends State<HomeTab> {
   }
 
   Widget _topPicks(){
-    return FutureBuilder(
-      future: _topPicksFuture,
-      builder: (context, snapshot){
-        if(snapshot.connectionState == ConnectionState.done){
-          if(snapshot.hasData){
-            return Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                TextView(text: "Top Picks By The Developers of WelpTV",
-                  padding: EdgeInsets.only(top: 20.0,),
-                  size: 20.0,
-                  isSelectable: true,
-                  color: colors.white,
-                  fontWeight: FontWeight.w600,
-                ),
-                SingleChildScrollView(
-                  scrollDirection: Axis.horizontal,
-                  padding: EdgeInsets.only(top: 20.0, bottom: 40.0,),
-                  child: Row(
-                    children: List.generate(_resultsList.length, (i){
-                      return TopPickWidget(
-                        onPressed: (){
-                          _openSeriesPanel(_resultsList[i],);
-                        },
-                        imageURL: _resultsList[i].image,
-                        seriesName: _resultsList[i].name,
-                        color: _resultsList[i].seriesColor,
-                      );
-                    }),
-                  ),
-                ),
-              ],
-            );
-          }else{
-            return Container();
-          }
-        }else{
-          return CustomLoader(
-            indicator: IndicatorType.circular,
-            color1: colors.white,
-            color2: colors.midGrey,
-          );
-        }
+    return Consumer<FirebaseService>(
+      builder: (context, service, child){
+        return FutureBuilder(
+          future: service.getTopPicks,
+          builder: (context, snapshot){
+            if(snapshot.connectionState == ConnectionState.done){
+              if(snapshot.hasData){
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    TextView(text: "Top Picks By The Developers of WelpTV",
+                      padding: EdgeInsets.only(top: 20.0,),
+                      size: 20.0,
+                      isSelectable: true,
+                      color: colors.white,
+                      fontWeight: FontWeight.w600,
+                    ),
+                    SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      padding: EdgeInsets.only(top: 20.0, bottom: 40.0,),
+                      child: Row(
+                        children: List.generate(snapshot.data.length, (i){
+                          return TopPickWidget(
+                            onPressed: (){
+                              _openSeriesPanel(snapshot.data[i],);
+                            },
+                            imageURL: snapshot.data[i].image,
+                            seriesName: snapshot.data[i].name,
+                            color: snapshot.data[i].seriesColor,
+                          );
+                        }),
+                      ),
+                    ),
+                  ],
+                );
+              }else{
+                return Container();
+              }
+            }else{
+              return CustomLoader(
+                indicator: IndicatorType.circular,
+                color1: colors.white,
+                color2: colors.midGrey,
+              );
+            }
+          },
+        );
       },
     );
   }

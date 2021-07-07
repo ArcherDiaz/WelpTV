@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:welptv/Services/NotificationService.dart';
 import 'package:welptv/Utils/ColorsClass.dart' as colors;
 
 class NotificationWrapper extends StatefulWidget {
@@ -10,7 +12,7 @@ class NotificationWrapper extends StatefulWidget {
 
 class _NotificationWrapperState extends State<NotificationWrapper> with SingleTickerProviderStateMixin {
 
-  dynamic _notifi = "";
+  dynamic _notification;
 
    AnimationController _controller;
    Animation<RelativeRect> _offsetAnimation;
@@ -46,6 +48,11 @@ class _NotificationWrapperState extends State<NotificationWrapper> with SingleTi
 
   @override
   Widget build(BuildContext context) {
+    String next = Provider.of<NotificationService>(context).getNextNotification;
+    if(_notification != next){
+      _notification = next;
+      _animate();
+    }
     return Stack(
       children: [
         widget.child,
@@ -96,16 +103,16 @@ class _NotificationWrapperState extends State<NotificationWrapper> with SingleTi
 
 
   void _animate(){
-    if(_notifi != null){
+    if(_notification != null){
+
       _controller.forward().whenComplete((){ ///show current notification
         Future.delayed(Duration(seconds: 5,),).whenComplete((){ ///wait 5 seconds
-          _controller.reverse().then((value){ ///remove current notification
-
-            _notifi = null;
-            if(_notifi != null){ ///if the queue is not empty, show next notification
-              _animate();
-            }
-          });
+          if(mounted){
+            _controller.reverse().then((value){ ///remove current notification
+              _notification = null;
+              Provider.of<NotificationService>(context, listen: false,).removeFirstNotification();
+            });
+          }
         });
       });
     }

@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:sad_lib/CustomWidgets.dart';
+import 'package:welptv/Services/NotificationService.dart';
 import 'package:welptv/Utils/ColorsClass.dart' as colors;
 import 'package:welptv/Widgets/Navigation.dart';
+import 'package:welptv/Widgets/NotificationWrapper.dart';
 import 'package:welptv/utils/CacheManagement.dart';
 
 class SettingsTab extends StatefulWidget {
@@ -33,20 +36,22 @@ class _SettingsTabState extends State<SettingsTab> {
   Widget build(BuildContext context) {
     return Material(
       color: colors.black,
-      child: Navigation(
-        child: Scrollbar(
-          controller: _scrollController,
-          child: SingleChildScrollView(
+      child: NotificationWrapper(
+        child: Navigation(
+          child: Scrollbar(
             controller: _scrollController,
-            scrollDirection: Axis.vertical,
-            padding: EdgeInsets.only(top: 20.0, bottom: 40.0, right: 10.0, ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                _about(),
-                _donate(),
-                _history(),
-              ],
+            child: SingleChildScrollView(
+              controller: _scrollController,
+              scrollDirection: Axis.vertical,
+              padding: EdgeInsets.only(top: 20.0, bottom: 40.0, right: 10.0, ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _about(),
+                  _donate(),
+                  _history(),
+                ],
+              ),
             ),
           ),
         ),
@@ -156,6 +161,7 @@ class _SettingsTabState extends State<SettingsTab> {
           ButtonView(
             onPressed: (){
               _cacheManagement.deleteRecentList();
+              Provider.of<NotificationService>(context, listen: false,).addNewNotification("deleted");
             },
             border: Border.all(color: colors.midGrey, width: 1.0,),
             highlightColor: colors.white.withOpacity(0.2,),
