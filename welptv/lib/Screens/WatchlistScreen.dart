@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:sad_lib/CustomWidgets.dart';
 import 'package:welptv/Utils/ColorsClass.dart' as colors;
 import 'package:welptv/Widgets/Navigation.dart';
+import 'package:welptv/Widgets/NotificationWrapper.dart';
 import 'package:welptv/Widgets/SeriesCard.dart';
 import 'package:welptv/utils/CacheManagement.dart';
 import 'package:welptv/Services/ScraperService.dart';
@@ -37,30 +38,32 @@ class _WatchlistTabState extends State<WatchlistTab> {
   Widget build(BuildContext context) {
     return Material(
       color: colors.black,
-      child: Navigation(
-        child: FutureBuilder(
-          future: _cacheManagement.loadWatchlist(),
-          builder: (context, snapshot){
-            if(snapshot.connectionState == ConnectionState.done){
-              return Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  _header(),
-                  if(snapshot.hasData)
-                    _savedView(snapshot.data,),
-                ],
-              );
-            }else{
-              return Padding(
-                padding: EdgeInsets.symmetric(vertical: 10.0,),
-                child: CustomLoader(
-                  indicator: IndicatorType.linear,
-                  color1: colors.white,
-                  color2: colors.midGrey,
-                ),
-              );
-            }
-          },
+      child: NotificationWrapper(
+        child: Navigation(
+          child: FutureBuilder(
+            future: _cacheManagement.loadWatchlist(),
+            builder: (context, snapshot){
+              if(snapshot.connectionState == ConnectionState.done){
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    _header(),
+                    if(snapshot.hasData)
+                      _savedView(snapshot.data,),
+                  ],
+                );
+              }else{
+                return Padding(
+                  padding: EdgeInsets.symmetric(vertical: 10.0,),
+                  child: CustomLoader(
+                    indicator: IndicatorType.linear,
+                    color1: colors.white,
+                    color2: colors.midGrey,
+                  ),
+                );
+              }
+            },
+          ),
         ),
       ),
     );

@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:sad_lib/CustomWidgets.dart';
 import 'package:welptv/Services/NotificationService.dart';
 import 'package:welptv/Utils/ColorsClass.dart' as colors;
+import 'package:welptv/Utils/NotificationClass.dart';
 
 class NotificationWrapper extends StatefulWidget {
   final Widget child;
@@ -12,7 +14,7 @@ class NotificationWrapper extends StatefulWidget {
 
 class _NotificationWrapperState extends State<NotificationWrapper> with SingleTickerProviderStateMixin {
 
-  dynamic _notification;
+  NotificationClass _notification;
 
    AnimationController _controller;
    Animation<RelativeRect> _offsetAnimation;
@@ -27,7 +29,7 @@ class _NotificationWrapperState extends State<NotificationWrapper> with SingleTi
 
     _offsetAnimation = RelativeRectTween(
       begin: RelativeRect.fromLTRB(0, -100, 0, 0,),
-      end: RelativeRect.fromLTRB(0, 5, 0, 0,),
+      end: RelativeRect.fromLTRB(0, 15, 0, 0,),
     ).animate(
       CurvedAnimation(
         parent: _controller,
@@ -48,7 +50,7 @@ class _NotificationWrapperState extends State<NotificationWrapper> with SingleTi
 
   @override
   Widget build(BuildContext context) {
-    String next = Provider.of<NotificationService>(context).getNextNotification;
+    NotificationClass next = Provider.of<NotificationService>(context).getNextNotification;
     if(_notification != next){
       _notification = next;
       _animate();
@@ -56,10 +58,11 @@ class _NotificationWrapperState extends State<NotificationWrapper> with SingleTi
     return Stack(
       children: [
         widget.child,
-        PositionedTransition(
-          rect: _offsetAnimation,
-          child: _notificationBox(),
-        ),
+        if(_notification != null)
+          PositionedTransition(
+            rect: _offsetAnimation,
+            child: _notificationBox(),
+          ),
       ],
     );
   }
@@ -85,14 +88,36 @@ class _NotificationWrapperState extends State<NotificationWrapper> with SingleTi
                   margin: EdgeInsets.symmetric(horizontal: 10.0,),
                   padding: EdgeInsets.all(10.0,),
                   decoration: BoxDecoration(
-                    color: colors.midGrey.withOpacity(0.25,),
+                    color: colors.midGrey.withOpacity(0.35,),
                     shape: BoxShape.circle,
                   ),
-                  child: Icon(Icons.people,
-                    size: 20.0,
+                  child: Icon(_notification.icon,
+                    size: 25.0,
                     color: colors.purple,
                   ),
-                )
+                ),
+                Expanded(
+                  child: TextView(text: _notification.text,
+                    padding: EdgeInsets.only(left: 10.0,),
+                    size: 15.0,
+                    isSelectable: true,
+                    color: colors.white,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+                ButtonView(
+                  onPressed: (){
+                    reverseNow(isDismissed: true,);
+                  },
+                  borderRadius: 360.0,
+                  //border: Border.all(width: 1.0, color: colors.white,),
+                  margin: EdgeInsets.symmetric(horizontal: 10.0,),
+                  padding: EdgeInsets.all(5.0,),
+                  child: Icon(Icons.close,
+                    size: 25.0,
+                    color: colors.white,
+                  ),
+                ),
               ],
             ),
           );
@@ -104,16 +129,25 @@ class _NotificationWrapperState extends State<NotificationWrapper> with SingleTi
 
   void _animate(){
     if(_notification != null){
-
       _controller.forward().whenComplete((){ ///show current notification
-        Future.delayed(Duration(seconds: 5,),).whenComplete((){ ///wait 5 seconds
-          if(mounted){
-            _controller.reverse().then((value){ ///remove current notification
-              _notification = null;
-              Provider.of<NotificationService>(context, listen: false,).removeFirstNotification();
-            });
-          }
+        Future.delayed(Duration(seconds: 3,),).whenComplete((){ ///wait 3 seconds
+          reverseNow(isDismissed: false,);
         });
+      });
+    }
+  }
+
+  void reverseNow({bool isDismissed = false}){
+    if(mounted){
+      if(isDismissed){
+        _controller.reverseDuration = Duration(milliseconds: 500,);
+      }
+      _controller.reverse().then((value){ ///remove current notification
+        _notification = null;
+        if(isDismissed){
+          _controller.reverseDuration = Duration(seconds: 1,);
+        }
+        Provider.of<NotificationService>(context, listen: false,).removeFirstNotification();
       });
     }
   }

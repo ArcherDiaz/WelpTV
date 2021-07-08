@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:sad_lib/CustomWidgets.dart';
 import 'package:welptv/Services/NotificationService.dart';
 import 'package:welptv/Utils/ColorsClass.dart' as colors;
+import 'package:welptv/Utils/NotificationClass.dart';
 import 'package:welptv/Widgets/Navigation.dart';
 import 'package:welptv/Widgets/NotificationWrapper.dart';
 import 'package:welptv/utils/CacheManagement.dart';
@@ -114,7 +115,9 @@ class _SettingsTabState extends State<SettingsTab> {
           ),
           ButtonView(
             onPressed: (){
-
+              Provider.of<NotificationService>(context, listen: false,).addNewNotification(
+                NotificationClass(icon: Icons.feedback_outlined, text: "We appreciate it. We really do 😬 But this button don't work yet bro"),
+              );
             },
             border: Border.all(color: colors.midGrey, width: 1.0,),
             highlightColor: colors.white.withOpacity(0.2,),
@@ -161,7 +164,9 @@ class _SettingsTabState extends State<SettingsTab> {
           ButtonView(
             onPressed: (){
               _cacheManagement.deleteRecentList();
-              Provider.of<NotificationService>(context, listen: false,).addNewNotification("deleted");
+              Provider.of<NotificationService>(context, listen: false,).addNewNotification(
+                  NotificationClass(icon: Icons.delete_outline, text: "Lol we got you 😉 your watched history was successfully cleared"),
+              );
             },
             border: Border.all(color: colors.midGrey, width: 1.0,),
             highlightColor: colors.white.withOpacity(0.2,),

@@ -1,9 +1,13 @@
+import 'dart:math';
+
 import 'package:beamer/beamer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:provider/provider.dart';
 import 'package:sad_lib/CustomWidgets.dart';
+import 'package:welptv/Services/NotificationService.dart';
 import 'package:welptv/Utils/ColorsClass.dart' as colors;
+import 'package:welptv/Utils/NotificationClass.dart';
 import 'package:welptv/Widgets/ReadMoreWidget.dart';
 import 'package:welptv/utils/CacheManagement.dart';
 import 'package:welptv/Services/ScraperService.dart';
@@ -16,6 +20,11 @@ class SeriesPanel extends StatefulWidget {
 }
 
 class _SeriesPanelState extends State<SeriesPanel> {
+
+  List<String> snarky = [
+    "Personally not my taste, but successfully saved your anime though ",
+    "I heard this one sucked, but have fun..",
+  ];
 
   CacheManagement _cacheManagement = CacheManagement();
 
@@ -140,11 +149,17 @@ class _SeriesPanelState extends State<SeriesPanel> {
                           setState(() {
                             _seriesData.isSavedToWatchlist = false;
                           });
+                          Provider.of<NotificationService>(context, listen: false,).addNewNotification(
+                            NotificationClass(icon: Icons.emoji_people_outlined, text: "It will be missed, but sayonara to that anime..",),
+                          );
                         }else {
                           _cacheManagement.saveToWatchlist(_seriesData,);
                           setState(() {
                             _seriesData.isSavedToWatchlist = true;
                           });
+                          Provider.of<NotificationService>(context, listen: false,).addNewNotification(
+                            NotificationClass(icon: Icons.bookmarks_outlined, text: snarky[Random().nextInt(snarky.length,)],),
+                          );
                         }
                       },
                       border: Border.all(color: colors.midGrey, width: 1.0,),

@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:sad_lib/CustomWidgets.dart';
 import 'package:welptv/Utils/ColorsClass.dart' as colors;
 import 'package:welptv/Widgets/Navigation.dart';
+import 'package:welptv/Widgets/NotificationWrapper.dart';
 import 'package:welptv/Widgets/SeriesCard.dart';
 import 'package:welptv/Services/ScraperService.dart';
 import 'package:welptv/utils/SeriesClass.dart';
@@ -37,28 +38,30 @@ class _SearchTabState extends State<SearchTab> {
   Widget build(BuildContext context) {
     return Material(
       color: colors.black,
-      child: Navigation(
-        child: Consumer<ScraperService>(
-          builder: (context, service, child){
-            return FutureBuilder(
-              future: service.getSearch,
-              builder: (context, snapshot){
-                return Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    _searchBar(
-                      isLoading: snapshot.connectionState != ConnectionState.done,
-                    ),
-                    _resultsHeader(
-                      resultsLength: snapshot.data == null ? 0 : snapshot.data.length,
-                      isLoading: snapshot.connectionState != ConnectionState.done,
-                    ),
-                    _results(snapshot.data == null ? [] : snapshot.data,),
-                  ],
-                );
-              },
-            );
-          },
+      child: NotificationWrapper(
+        child: Navigation(
+          child: Consumer<ScraperService>(
+            builder: (context, service, child){
+              return FutureBuilder(
+                future: service.getSearch,
+                builder: (context, snapshot){
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      _searchBar(
+                        isLoading: snapshot.connectionState != ConnectionState.done,
+                      ),
+                      _resultsHeader(
+                        resultsLength: snapshot.data == null ? 0 : snapshot.data.length,
+                        isLoading: snapshot.connectionState != ConnectionState.done,
+                      ),
+                      _results(snapshot.data == null ? [] : snapshot.data,),
+                    ],
+                  );
+                },
+              );
+            },
+          ),
         ),
       ),
     );
